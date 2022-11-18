@@ -1,25 +1,62 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/schedule.h"
+#include "..\include\schedule.h"
 
-int main()
+int main(int argc, char **argv)
 {
-    Team teams[6];
+    Team *teams;
+    int n_teams, n_matches_played;
 
-    teams[0] = (Team){"A"};
-    teams[1] = (Team){"B"};
-    teams[2] = (Team){"C"};
-    teams[3] = (Team){"D"};
-    teams[4] = (Team){"E"};
-    teams[5] = (Team){"F"};
-    // teams[6] = (Team){"G"};
-    // teams[7] = (Team){"H"};
-    // teams[8] = (Team){"I"};
-    // teams[9] = (Team){"J"};
+    if (argc != 2)
+    {
+        printf("Too few arguments as parameter");
+        return -1;
+    }
 
-    int n_teams = (sizeof(teams) / sizeof(Team));
-    generateSchedules(teams, n_teams);
+    teams = readFile(argv[1], &n_teams, &n_matches_played);
 
+    generateSchedules(teams, n_teams, n_matches_played);
+
+    for (int i = 0; i < n_teams; i++)
+    {
+        printf("%s: --> %.2f%% %.2f%% %.2f%%\n", teams[i].name, (teams[i].first / 483840.0) * 100, (teams[i].second / 483840.0) * 100, (teams[i].third / 483840.0) * 100);
+    }
     return 0;
+}
+
+Team *readFile(char *file, int *n_teams, int *n_matches_played)
+{
+    FILE *fp;
+    Team *t;
+    int count = 0;
+
+    fp = fopen(file, "r");
+    fscanf(fp, "%d %d", n_teams, n_matches_played); // Number of lines to be read. Number of teams
+
+    t = (Team *)malloc(*n_teams * sizeof(Team));
+    for (int i = 0; i < *n_teams; i++)
+    {
+        t[i].name = (char *)malloc(30 * sizeof(char));
+        t[i].firstRound = (float *)malloc(*n_matches_played * sizeof(float));
+        t[i].secondRound = (float *)malloc(*n_matches_played * sizeof(float));
+        t[i].n_matches_first = *n_matches_played;
+        t[i].points = 0;
+        t[i].first = 0;
+        t[i].second = 0;
+        t[i].third = 0;
+    }
+
+    while (count < *n_teams)
+    {
+        fscanf(fp, "%s", t[count].name);
+        for (int i = 0; i < *n_matches_played; i++)
+        {
+            fscanf(fp, "%f", &t[count].firstRound[i]);
+        }
+        count++;
+    }
+    fclose(fp);
+
+    return t;
 }

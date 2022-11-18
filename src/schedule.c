@@ -3,7 +3,7 @@
 #include <string.h>
 #include "../include/schedule.h"
 
-void generateSchedules(Team *teams, int n_teams)
+void generateSchedules(Team *teams, int n_teams, int n_effective_matches)
 {
     int count; // Useful for counting combinations in order to debug
     int n_matches;
@@ -52,7 +52,7 @@ void generateSchedules(Team *teams, int n_teams)
     count = comb_sempl_matchweek(0, possible_matches, sol2, n_matches, n_teams / 2, 0, 0, possible_matchweeks);
     printf("Possible matchweeks: %d\n", count);
 
-    filterMatchweeks(possible_matchweeks, n_matchweeks, n_teams);
+    filterMatchweeks(possible_matchweeks, n_matchweeks, teams, n_teams, n_effective_matches);
 }
 
 int comb_sempl_match(int pos, Team *val, Team *sol, int n, int k, int start, int count, Match *saved)
@@ -118,7 +118,7 @@ int validate(Match *sol, int n_matches)
     return 0;
 };
 
-void filterMatchweeks(Matchweek *mw, int n, int n_teams)
+void filterMatchweeks(Matchweek *mw, int n, Team *teams, int n_teams, int n_effective_matches)
 {
     Matchweek *matchweek_set; // Filtered matchweeks which are compatible to be in a round
     Matchweek *sol;
@@ -186,18 +186,18 @@ void filterMatchweeks(Matchweek *mw, int n, int n_teams)
         }
         if (size >= n_teams - 1)
         {
-            count = perm_sempl_round(0, matchweek_set, sol, mark, n_teams - 1, count);
+            count = PermuteAndCompute(0, matchweek_set, sol, mark, n_teams - 1, count, teams, n_teams, n_effective_matches);
         }
     }
     printf("Possible rounds: %d\n", count);
 }
 
-int perm_sempl_round(int pos, Matchweek *val, Matchweek *sol, int *mark, int n, int count)
+int PermuteAndCompute(int pos, Matchweek *val, Matchweek *sol, int *mark, int n, int count, Team *teams, int n_teams, int n_matches)
 {
     int i;
     if (pos >= n)
     {
-        // TODO
+        compute(sol, teams, n, n_teams, n_matches);
         printf("%d\r", count + 1);
         return count + 1;
     }
@@ -207,9 +207,84 @@ int perm_sempl_round(int pos, Matchweek *val, Matchweek *sol, int *mark, int n, 
         {
             mark[i] = 1;
             sol[pos] = val[i];
-            count = perm_sempl_round(pos + 1, val, sol, mark, n, count);
+            count = PermuteAndCompute(pos + 1, val, sol, mark, n, count, teams, n_teams, n_matches);
             mark[i] = 0;
         }
     }
     return count;
+}
+
+void compute(Matchweek *round, Team *teams, int n_matchweek, int n_teams, int n_matches)
+{
+    for (int i = 0; i < n_matchweek; i++)
+    {
+        // For each matchweek
+        for (int j = 0; j < n_teams / 2; j++)
+        {
+            // For each match of the matchweek
+            for (int k = i; k < n_matches; k += (n_teams - 1))
+            {
+                if (goal(round[i].matches[j].home.firstRound[k]) > goal(round[i].matches[j].away.firstRound[k]))
+                {
+                    for (int m = 0; m < n_teams; m++)
+                    {
+                        strcmp(round[i].matches[j].home.name, teams[m].name) == 0 ? teams[m].points += 3 : 1;
+                    }
+                }
+                else if (goal(round[i].matches[j].home.firstRound[k]) < goal(round[i].matches[j].away.firstRound[k]))
+                {
+                    for (int m = 0; m < n_teams; m++)
+                    {
+                        strcmp(round[i].matches[j].away.name, teams[m].name) == 0 ? teams[m].points += 3 : 1;
+                    }
+                }
+                else
+                {
+                    for (int m = 0; m < n_teams; m++)
+                    {
+                        strcmp(round[i].matches[j].home.name, teams[m].name) == 0 ? teams[m].points += 1 : 1;
+                        strcmp(round[i].matches[j].away.name, teams[m].name) == 0 ? teams[m].points += 1 : 1;
+                    }
+                }
+            }
+        }
+    }
+    Team tmp;
+    for (int i = 0; i < n_teams - 1; i++)
+    {
+        for (int j = 0; j < n_teams - 1; j++)
+        {
+            if (teams[j].points > teams[j + 1].points)
+            {
+                tmp = teams[j];
+                teams[j] = teams[j + 1];
+                teams[j + 1] = tmp;
+            }
+        }
+    }
+
+    teams[n_teams - 1].first++;
+    teams[n_teams - 2].second++;
+    teams[n_teams - 3].third++;
+
+    for (int i = 0; i < n_teams; i++)
+    {
+        teams[i].points = 0;
+    }
+}
+
+int goal(float points)
+{
+    float base = 66.0;
+    int goals = 1;
+
+    if (points < base)
+        return 0;
+
+    while (base + 4.0 < points)
+    {
+        base += 4.0;
+        goals++;
+    }
+    return goals;
 }
