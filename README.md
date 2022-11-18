@@ -1,9 +1,9 @@
 # Calendario-Fantacalcio
 
 ## Description
-This program is able to generate most of the possible calendars by combining th possible matches of N teams and to compute some stats for each calendar computed.
+This program is able to generate most of the possible calendars by combining the possible matches of N teams and to compute some stats for each calendar computed.
 
-In particular ```v1.0``` computes most of the possible calendar and for each of them compute the ranking and print on the stdout the percentage of each team to reach the podium
+In particular ```v1.X``` computes most of the possible calendar and for each of them it computes the ranking and prints on the stdout the percentage of each team to reach the podium
 ## How to use
 - Go in the working directory
 - Compile the program using ```gcc -Wall src/main.c src/schedule.c -o bin/schedule```

@@ -39,7 +39,7 @@ int main(int argc, char **argv)
     printf("\nTEAM NAME           \t\tFIRST PLACE\t\tSECOND PLACE\t\tTHIRD PLACE\n");
     for (int i = 0; i < n_teams; i++)
     {
-        printf("%-20.20s\t\t%10.5f%%\t\t%11.5f%%\t\t%10.5f%%\n", teams[i].name, (teams[i].first / (float)n_combinations) * 100, (teams[i].second / 483840.0) * 100, (teams[i].third / 483840.0) * 100);
+        printf("%-20.20s\t\t%10.5f%%\t\t%11.5f%%\t\t%10.5f%%\n", teams[i].name, (teams[i].first / (float)n_combinations) * 100, (teams[i].second / (float)n_combinations) * 100, (teams[i].third / (float)n_combinations) * 100);
     }
     return 0;
 }
