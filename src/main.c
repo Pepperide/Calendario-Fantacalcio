@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 
     if (argc != 2)
     {
-        printf("Too few arguments as parameter");
+        printf("Too few arguments as parameter\n");
         return -1;
     }
 
