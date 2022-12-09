@@ -8,7 +8,7 @@ int main(int argc, char **argv)
     Team *teams;
     int n_teams, n_matches_played;
     int max_calendars;
-    int n_combinations;
+    // int n_combinations;
 
     if (argc != 3)
     {
