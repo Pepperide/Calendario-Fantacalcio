@@ -14,7 +14,7 @@ _OBJ = main.o schedule.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
-$(ODIR)/%.o: src/%.c $(DEPS)
+$(ODIR)/%.o: old/src $(DEPS)
 	$(CC) -Wall -c -o $@ $< $(CFLAGS)
 
 bin/schedule_lnx: $(OBJ)
