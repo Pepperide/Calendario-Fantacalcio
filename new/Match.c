@@ -7,13 +7,57 @@
 #include <stdio.h>
 #include <string.h>
 
+Match* initMatchesByParticipants(int n){
+    Match* matches;
+    switch(n){
+        case 4:
+            matches = (Match*)malloc(MAX_MATCHES4*sizeof(Match));
+            break;
+        case 6:
+            matches = (Match*)malloc(MAX_MATCHES6*sizeof(Match));
+            break;
+        case 8:
+            matches = (Match*)malloc(MAX_MATCHES8*sizeof(Match));
+            break;
+        case 10:
+            matches = (Match*)malloc(MAX_MATCHES10*sizeof(Match));
+            break;
+        case 12:
+            matches = (Match*)malloc(MAX_MATCHES12*sizeof(Match));
+            break;
+        default:
+            fprintf(stderr,"Participants must be between 4 and 12\n");
+            exit(1);
+    }
+    return matches;
+}
+
+int getComputedMatches(int n){
+    switch(n){
+        case 4:
+            return MAX_MATCHES4;
+        case 6:
+            return MAX_MATCHES6;
+        case 8:
+            return MAX_MATCHES8;
+        case 10:
+            return MAX_MATCHES10;
+        case 12:
+            return MAX_MATCHES12;
+        default:
+            fprintf(stderr,"Participants must be between 4 and 12\n");
+            exit(1);
+    }
+}
+
 Match* generatePossibleMatches_wrapper(Team* teams, int n){
     Match* matches;
     Team tmp[2];
-    int size = 15;
+    //int size = 15;
     int n_matches;
 
-    matches = (Match*)malloc(size*sizeof(Match));
+    //matches = (Match*)malloc(size*sizeof(Match));
+    matches = initMatchesByParticipants(n);
 
     n_matches= generatePossibleMatches(0,teams,tmp,matches,n,2,0,0);
 

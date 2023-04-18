@@ -24,7 +24,7 @@ int main (int argc, char **argv){
 
     teams = readTeams_fromFile(argv[2],n);
     matches = generatePossibleMatches_wrapper(teams,n);
-    matchweeks = generatePossibleMatchweeks_wrapper(matches,15,n/2);
+    matchweeks = generatePossibleMatchweeks_wrapper(matches,n);
 
     return 0;
 }
