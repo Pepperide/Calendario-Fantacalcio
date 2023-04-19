@@ -5,6 +5,7 @@
 #include "Matchweek.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 Matchweek* initMatchweeksByParticipants(int n){
     Matchweek* m;
@@ -41,6 +42,24 @@ Matchweek* initMatchweeksByParticipants(int n){
     return m;
 }
 
+int getComputedMatchweeks(int n){
+    switch(n){
+        case 4:
+            return MAX_MATCHWEEKS4;
+        case 6:
+            return MAX_MATCHWEEKS6;
+        case 8:
+            return MAX_MATCHWEEKS8;
+        case 10:
+            return MAX_MATCHWEEKS10;
+        case 12:
+            return MAX_MATCHWEEKS12;
+        default:
+            fprintf(stderr,"Participants must be between 4 and 12\n");
+            exit(1);
+    }
+}
+
 Matchweek* generatePossibleMatchweeks_wrapper(Match *matches, int n_teams){
     Matchweek *matchweeks;
     Match *sol;
@@ -70,13 +89,13 @@ int generatePossibleMatchweeks(int pos, Match *val, Match *sol, Matchweek *saved
         sol[pos].home = val[i].home;
         sol[pos].away = val[i].away;
         new_size=0;
-        Match *new_matches = pruneAvailableSet(val, sol,&new_size, n, pos,i+1);
+        Match *new_matches = pruneAvailableMatchSet(val, sol,&new_size, n, pos,i+1);
         count = generatePossibleMatchweeks(pos + 1, new_matches, sol, saved, new_size, k, 0, count);
     }
     return count;
 }
 
-Match* pruneAvailableSet(Match* old, Match* current, int* new_size, int n, int current_size,int start){
+Match* pruneAvailableMatchSet(Match* old, Match* current, int* new_size, int n, int current_size,int start){
     Match *new;
     new = (Match*)malloc(n*sizeof(Match));
 
@@ -85,4 +104,15 @@ Match* pruneAvailableSet(Match* old, Match* current, int* new_size, int n, int c
                 new[(*new_size)++] = old[j];
         }
     return new;
+}
+
+int containTwiceMatch(Matchweek m1, Matchweek m2, int n_match){
+    for(int i=0; i<n_match;i++){
+        for(int j=0;j<n_match;j++){
+            if( (strcmp(m1.matches[i].home.name,m2.matches[j].home.name)==0 && strcmp(m1.matches[i].away.name,m2.matches[j].away.name)==0)||
+                (strcmp(m1.matches[i].home.name,m2.matches[j].away.name)==0 && strcmp(m1.matches[i].away.name,m2.matches[j].home.name)==0))
+                return 1;
+        }
+    }
+    return 0;
 }

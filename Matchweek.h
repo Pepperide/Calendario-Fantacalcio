@@ -17,9 +17,11 @@ typedef struct matchweek{
 } Matchweek;
 
 Matchweek* initMatchweeksByParticipants(int n);
+int getComputedMatchweeks(int n);
 
 Matchweek* generatePossibleMatchweeks_wrapper(Match *matches, int n_teams);
 int generatePossibleMatchweeks(int pos, Match *val, Match *sol, Matchweek *saved, int n, int k, int start, int count);
 
-Match * pruneAvailableSet(Match* old, Match* current, int* new_size, int n, int current_size, int start);
+Match * pruneAvailableMatchSet(Match* old, Match* current, int* new_size, int n, int current_size, int start);
+int containTwiceMatch(Matchweek m1, Matchweek m2, int n_match);
 #endif //CALENDARIO_FANTACALCIO_MATCHWEEK_H
